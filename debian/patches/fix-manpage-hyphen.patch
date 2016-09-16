@@ -1,0 +1,17 @@
+Description: Escape hyphens in mcelog.8
+Author: Andrey Rahmatullin <wrar@wrar.name>
+Last-Update: 2012-11-27
+
+diff --git a/mcelog.8 b/mcelog.8
+index fa923e7..036ffe2 100644
+--- a/mcelog.8
++++ b/mcelog.8
+@@ -279,7 +279,7 @@ use
+ The kernel prefers old messages over new. If the log buffer overflows
+ only old ones will be kept.
+ 
+-The exact output in the log file depends on the CPU, unless the --raw option is used.
++The exact output in the log file depends on the CPU, unless the \-\-raw option is used.
+ 
+ mcelog will report serious errors to the syslog during decoding.
+ 

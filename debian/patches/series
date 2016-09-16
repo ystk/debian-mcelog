@@ -1,0 +1,6 @@
+fix_64bit_mem_addr.patch
+fix_dmi_segfault.patch
+fix-spelling.patch
+fix-manpage-hyphen.patch
+use-cflags.patch
+is-cpu-supported.patch

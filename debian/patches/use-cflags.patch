@@ -1,0 +1,14 @@
+Description: Allow overriding CFLAGS
+Author: Andrey Rahmatullin <wrar@wrar.name>
+Last-Update: 2014-08-10
+
+diff --git a/Makefile b/Makefile
+index 2802244..646cfdc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,4 @@
+-CFLAGS := -g -Os
++CFLAGS += -g -Os
+ prefix := /usr
+ etcprefix :=
+ # Define appropiately for your distribution

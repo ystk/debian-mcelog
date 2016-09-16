@@ -1,0 +1,17 @@
+Description: Fix a spelling error in dmi_sanity_check()
+Author: Andrey Rahmatullin <wrar@wrar.name>
+Last-Update: 2012-11-27
+
+diff --git a/dmi.c b/dmi.c
+index 373837e..4558e7b 100644
+--- a/dmi.c
++++ b/dmi.c
+@@ -494,7 +494,7 @@ int dmi_sanity_check(void)
+ 						dmi_dimms[i]->device_locator);
+ 			if (!strcmp(b, loc)) {
+ 				if (verbose > 0)
+-					printf("Ambigious locators `%s'<->`%s'."
++					printf("Ambiguous locators `%s'<->`%s'."
+ 					       FAILED, b, loc);
+ 				return 0;
+ 			}

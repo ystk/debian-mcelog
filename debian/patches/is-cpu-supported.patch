@@ -1,0 +1,91 @@
+Description: Add --is-cpu-supported command line option
+ When this option is provided, mcelog always exits silently after checking
+ whether the CPU is supported. The return code is 0 if the CPU is supported,
+ 1 otherwise. This is intended for use in scripts that need to guard against
+ starting the daemon on an unsupported platform.
+Author: Sergio Gelato <Sergio.Gelato@astro.su.se>
+Origin: vendor, https://bugs.launchpad.net/debian/+source/mcelog/+bug/1279293
+Bug-Debian: https://bugs.debian.org/738927
+Bug-Ubuntu: https://bugs.launchpad.net/debian/+source/mcelog/+bug/1279293
+Last-Update: 2014-10-15
+
+--- a/mcelog.c
++++ b/mcelog.c
+@@ -83,6 +83,7 @@
+ static char *logfile;
+ static int debug_numerrors;
+ int imc_log = -1;
++static int check_only = 0;
+ 
+ static int is_cpu_supported(void);
+ 
+@@ -930,6 +931,7 @@
+ "--num-errors N      Only process N errors (for testing)\n"
+ "--pidfile file	     Write pid of daemon into file\n"
+ "--no-imc-log	     Disable extended iMC logging\n"
++"--is-cpu-supported  Exit with return code indicating whether the CPU is supported\n"
+ 		);
+ 	diskdb_usage();
+ 	print_cputypes();
+@@ -964,6 +966,7 @@
+ 	O_PIDFILE,
+ 	O_DEBUG_NUMERRORS,
+ 	O_NO_IMC_LOG,
++	O_IS_CPU_SUPPORTED,
+ };
+ 
+ static struct option options[] = {
+@@ -997,6 +1000,7 @@
+ 	{ "pidfile", 1, NULL, O_PIDFILE },
+ 	{ "debug-numerrors", 0, NULL, O_DEBUG_NUMERRORS }, /* undocumented: for testing */
+ 	{ "no-imc-log", 0, NULL, O_NO_IMC_LOG },
++	{ "is-cpu-supported", 0, NULL, O_IS_CPU_SUPPORTED },
+ 	DISKDB_OPTIONS
+ 	{}
+ };
+@@ -1104,6 +1108,9 @@
+ 	case O_NO_IMC_LOG:
+ 		imc_log = 0;
+ 		break;
++	case O_IS_CPU_SUPPORTED:
++		check_only = 1;
++		break;
+ 	case 0:
+ 		break;
+ 	default:
+@@ -1321,9 +1328,12 @@
+ 
+ 	/* before doing anything else let's see if the CPUs are supported */
+ 	if (!cpu_forced && !is_cpu_supported()) {
+-		fprintf(stderr, "CPU is unsupported\n");
++		if (!check_only)
++			fprintf(stderr, "CPU is unsupported\n");
+ 		exit(1);
+ 	}
++	if (check_only)
++		exit(0);
+ 
+ 	/* If the user didn't tell us not to use iMC logging, check if CPU supports it */
+ 	if (imc_log == -1) {
+--- a/mcelog.8
++++ b/mcelog.8
+@@ -17,6 +17,8 @@
+ .\".br
+ .\"mcelog [options] \-\-dump-memory[=locator]
+ .br
++mcelog [options] \-\-is\-cpu\-supported
++.br
+ mcelog \-\-version
+ .SH DESCRIPTION
+ X86 CPUs report errors detected by the CPU as
+@@ -75,6 +77,10 @@
+ so the output should be always saved somewhere and mcelog
+ not run in uncontrolled ways.
+ 
++When invoked with the
++.I \-\-is\-cpu\-supported
++option mcelog exits with code 0 if the current CPU is supported, 1 otherwise.
++
+ .SH OPTIONS
+ When the 
+ .B \-\-syslog
